@@ -9,4 +9,9 @@ router
   .get(postsController.getPosts)
   .post(postsController.createPost);
 
+router
+  .route('/:id')
+  .get(postsController.getPost)
+  .patch(postsController.updatePost);
+
 module.exports = router;
