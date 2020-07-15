@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Must have a password'],
-    minlength: [6, 'Password must be at least 6 characters'],
+    minlength: 6,
     select: false,
   },
   passwordConfirm: {
@@ -30,6 +31,14 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords do not match',
     },
   },
+});
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
 });
 
 userSchema.plugin(uniqueValidator);
