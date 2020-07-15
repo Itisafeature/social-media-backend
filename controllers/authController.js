@@ -9,8 +9,6 @@ exports.signup = async (req, res, next) => {
       passwordConfirm: req.body.passwordConfirm,
     });
 
-    console.log(user);
-
     res.status(201).json({
       status: 'success',
       data: {
@@ -21,6 +19,27 @@ exports.signup = async (req, res, next) => {
     res.status(400).json({
       status: 'failed',
       err: err,
+    });
+  }
+};
+
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    // Not sure how to get rid of password
+    const user = await User.findOne({ email }).select('+password');
+    await user.correctPassword(password, user.password);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    res.status(401).json({
+      status: 'failed',
+      err: 'Invalid Credentials',
     });
   }
 };
