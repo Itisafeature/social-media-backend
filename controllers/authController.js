@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
+const { promisfy } = require('util');
 const User = require('../models/userModel');
-const { create } = require('../models/userModel');
 
 const createAndSendToken = (user, statusCode, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -22,7 +22,7 @@ const createAndSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: 'success',
-    token,
+
     data: {
       user,
     },
@@ -52,16 +52,9 @@ exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    // Not sure how to get rid of password
     const user = await User.findOne({ email }).select('+password');
-    if (await user.correctPassword(password, user.password)) {
-      createAndSendToken(user, 200, res);
-    } else {
-      res.status(401).json({
-        status: 'failed',
-        err: 'Invalid Credentials',
-      });
-    }
+    await user.correctPassword(password, user.password);
+    createAndSendToken(user, 200, res);
   } catch (err) {
     res.status(401).json({
       status: 'failed',
@@ -76,4 +69,28 @@ exports.logout = (req, res) => {
     httpOnly: true,
   });
   res.status(200).json({ status: 'success' });
+};
+
+exports.protect = async (req, res, next) => {
+  try {
+    const token = await req.cookies.jwt;
+    const decodedToken = await promisfy(jwt.verify)(
+      token,
+      process.env.JWT_SECRET
+    );
+    const user = await User.findById(decoded.id);
+    if (!token || !user) {
+      return res.status(401).json({
+        status: 'failed',
+        err: 'Unauthorized',
+      });
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      status: 'failed',
+      err: 'Unauthorized',
+    });
+  }
 };

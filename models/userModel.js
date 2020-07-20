@@ -45,7 +45,8 @@ userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+  const boolean = await bcrypt.compare(candidatePassword, userPassword);
+  if (!boolean) throw new Error('Invalid Credentials');
 };
 
 userSchema.plugin(uniqueValidator);
