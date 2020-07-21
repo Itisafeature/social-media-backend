@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { promisfy } = require('util');
+const { promisify } = require('util');
 const User = require('../models/userModel');
 
 const createAndSendToken = (user, statusCode, res) => {
@@ -12,8 +12,9 @@ const createAndSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httponly: true,
-    secure: true,
   };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
@@ -22,7 +23,6 @@ const createAndSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: 'success',
-
     data: {
       user,
     },
@@ -74,11 +74,13 @@ exports.logout = (req, res) => {
 exports.protect = async (req, res, next) => {
   try {
     const token = await req.cookies.jwt;
-    const decodedToken = await promisfy(jwt.verify)(
+    const decodedToken = await promisify(jwt.verify)(
       token,
       process.env.JWT_SECRET
     );
-    const user = await User.findById(decoded.id);
+
+    const user = await User.findById(decodedToken.id);
+
     if (!token || !user) {
       return res.status(401).json({
         status: 'failed',
@@ -88,6 +90,7 @@ exports.protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
+    console.log(err);
     return res.status(401).json({
       status: 'failed',
       err: 'Unauthorized',
