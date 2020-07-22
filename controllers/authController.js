@@ -17,6 +17,10 @@ const createAndSendToken = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
+  res.cookie(
+    'expiresAt',
+    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  );
 
   // remove password from output
   user.password = undefined;
@@ -87,6 +91,7 @@ exports.protect = async (req, res, next) => {
         err: 'Unauthorized',
       });
     }
+    console.log('here');
     req.user = user;
     next();
   } catch (err) {
@@ -96,4 +101,9 @@ exports.protect = async (req, res, next) => {
       err: 'Unauthorized',
     });
   }
+};
+
+exports.isAuthenticated = (req, res, next) => {
+  console.log(req.cookies);
+  res.status(200).json({});
 };
