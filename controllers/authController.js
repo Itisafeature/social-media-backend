@@ -19,7 +19,10 @@ const createAndSendToken = (user, statusCode, res) => {
   res.cookie('jwt', token, cookieOptions);
   res.cookie(
     'expiresAt',
-    Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    cookieOptions
   );
 
   // remove password from output
@@ -27,9 +30,7 @@ const createAndSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: 'success',
-    data: {
-      user,
-    },
+    user,
   });
 };
 
@@ -91,7 +92,7 @@ exports.protect = async (req, res, next) => {
         err: 'Unauthorized',
       });
     }
-    console.log('here');
+
     req.user = user;
     next();
   } catch (err) {
@@ -104,6 +105,8 @@ exports.protect = async (req, res, next) => {
 };
 
 exports.isAuthenticated = (req, res, next) => {
-  console.log(req.cookies);
-  res.status(200).json({});
+  res.status(200).json({
+    status: 'success',
+    user: req.user,
+  });
 };
