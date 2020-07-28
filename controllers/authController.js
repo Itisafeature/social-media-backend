@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const User = require('../models/userModel');
 
 const createAndSendToken = (user, statusCode, res) => {
-  const expiration = Date.now() + 1000;
+  const expiration = Date.now() + 10 * 24 * 60 * 60 * 1000;
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: expiration,
   });
@@ -27,6 +27,7 @@ const createAndSendToken = (user, statusCode, res) => {
   });
 };
 
+// TODO: EMAIL VERIFICATION
 exports.signup = async (req, res, next) => {
   try {
     const user = await User.create({
@@ -63,7 +64,7 @@ exports.login = async (req, res, next) => {
 
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
+    expires: new Date(Date.now() + 10 * 1000), // TODO: Understand this
     httpOnly: true,
   });
   res.status(200).json({ status: 'success' });

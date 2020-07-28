@@ -27,14 +27,16 @@ exports.getPost = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const post = await Post.create(req.body);
+    const post = await Post.create({
+      content: req.body.content,
+      user: req.user,
+    });
     res.status(201).json({
       status: 'success',
-      data: {
-        post,
-      },
+      post,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({
       err: err['errors']['content']['properties']['message'],
     });
