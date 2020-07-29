@@ -51,9 +51,7 @@ exports.updatePost = async (req, res, next) => {
     });
     res.status(200).json({
       status: 'succes',
-      data: {
-        post,
-      },
+      post,
     });
   } catch (err) {
     res.status(400).json({
