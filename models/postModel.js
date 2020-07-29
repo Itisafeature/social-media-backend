@@ -1,18 +1,21 @@
 const mongoose = require('mongoose');
 
-const postSchema = new mongoose.Schema({
-  content: {
-    type: String,
-    required: [true, 'A post must have some content'],
-    minlength: [10, 'Minimum of ten characters required'],
+const postSchema = new mongoose.Schema(
+  {
+    content: {
+      type: String,
+      required: [true, 'A post must have some content'],
+      minlength: [10, 'Minimum of ten characters required'],
+    },
+    likes: Number,
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Post must belong to a user'],
+    },
   },
-  likes: Number,
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: [true, 'Post must belong to a user'],
-  },
-});
+  { timestamps: true }
+);
 
 postSchema.pre(/^find/, function (next) {
   this.populate({

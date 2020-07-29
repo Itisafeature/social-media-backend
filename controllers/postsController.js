@@ -1,7 +1,7 @@
 const Post = require('../models/postModel');
 
 exports.getPosts = async (req, res, next) => {
-  const posts = await Post.find().select('-__v'); // Not excluding __v
+  const posts = await Post.find().sort({ updatedAt: -1 }).select('-__v'); // Not excluding __v
 
   res.status(200).json({
     status: 'success',
