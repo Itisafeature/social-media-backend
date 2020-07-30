@@ -2,8 +2,11 @@ const express = require('express');
 
 const postsController = require('../controllers/postsController');
 const authController = require('../controllers/authController');
+const commentRouter = require('./commentRoutes');
 
 const router = express.Router();
+
+router.use('/:postId/comments', commentRouter);
 
 router
   .route('/')

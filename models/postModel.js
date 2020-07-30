@@ -1,5 +1,18 @@
 const mongoose = require('mongoose');
 
+const commentSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: [true, 'A comment must have some content'],
+    minlength: [5, 'Minimum of five characters required'],
+  },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: [true, 'Comment must belong to a user'],
+  },
+});
+
 const postSchema = new mongoose.Schema(
   {
     content: {
@@ -13,6 +26,7 @@ const postSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Post must belong to a user'],
     },
+    comments: [commentSchema],
   },
   { timestamps: true }
 );
