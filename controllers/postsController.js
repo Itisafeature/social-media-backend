@@ -1,7 +1,14 @@
 const Post = require('../models/postModel');
 
 exports.getPosts = async (req, res, next) => {
-  const posts = await Post.find().sort({ updatedAt: -1 }).select('-__v'); // Not excluding __v
+  let posts;
+  if (req.params.userId) {
+    posts = await Post.find({ user: req.params.userId })
+      .sort({ updatedAt: -1 })
+      .select('-__v');
+  } else {
+    posts = await Post.find().sort({ updatedAt: -1 }).select('-__v'); // Not excluding __v
+  }
 
   res.status(200).json({
     status: 'success',
@@ -54,6 +61,7 @@ exports.updatePost = async (req, res, next) => {
       post,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({
       status: 'error',
       err: err['errors']['content']['properties']['message'],
