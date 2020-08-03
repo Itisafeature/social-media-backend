@@ -7,7 +7,7 @@ exports.getComments = async (req, res, next) => {
   if (post) {
     res.status(200).json({
       status: 'success',
-      comment: post.comments,
+      comments: post.comments,
     });
   } else {
     res.status(400).json({
