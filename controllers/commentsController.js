@@ -1,4 +1,5 @@
 const Post = require('../models/postModel');
+const catchAsync = require('../utils/catchAsync');
 
 exports.getComments = async (req, res, next) => {
   // TODO: Handle Error
@@ -16,13 +17,14 @@ exports.getComments = async (req, res, next) => {
   }
 };
 
-exports.createComment = async (req, res, next) => {
+exports.createComment = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.postId);
   post.comments.push({ content: req.body.content, user: req.user });
   const comment = post.comments[post.comments.length - 1];
   await post.save();
+  console.log(comment);
   res.status(201).json({
     status: 'success',
     comment,
   });
-};
+});
