@@ -22,6 +22,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A post must have some content'],
       minlength: [10, 'Minimum of ten characters required'],
+      maxlength: [250, 'Max length of 250 characters'],
     },
     likes: Number,
     user: {
