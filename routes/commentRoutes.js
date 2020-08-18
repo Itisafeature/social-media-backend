@@ -5,8 +5,11 @@ const authController = require('../controllers/authController');
 const router = express.Router({ mergeParams: true });
 
 router
+  .route('/:start')
+  .get(authController.protect, commentsController.getComments);
+
+router
   .route('/')
-  .get(authController.protect, commentsController.getComments)
   .post(authController.protect, commentsController.createComment);
 
 module.exports = router;

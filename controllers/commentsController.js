@@ -1,25 +1,24 @@
 const Post = require('../models/postModel');
 const catchAsync = require('../utils/catchAsync');
 
-exports.getComments = async (req, res, next) => {
+exports.getComments = catchAsync(async (req, res, next) => {
   // TODO: Handle Error
   const post = await Post.findById(req.params.postId);
+  if (req.params.start * 1 > post.comments.length) {
+  }
+  // This is pure trash
   const comments = post.comments
     .map((el) => el)
-    .sort((a, b) => b.createdAt - a.createdAt);
-
-  //const comments = post.comments.map((el) => el).sort({ createdAt: -1 });
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(req.params.start * 1, req.params.start * 1 + 5);
+  // console.log(comments);
   if (post) {
     res.status(200).json({
       status: 'success',
       comments,
     });
-  } else {
-    res.status(400).json({
-      status: 'failed',
-    });
   }
-};
+});
 
 exports.createComment = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.postId);
