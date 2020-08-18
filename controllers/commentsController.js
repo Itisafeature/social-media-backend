@@ -4,11 +4,15 @@ const catchAsync = require('../utils/catchAsync');
 exports.getComments = async (req, res, next) => {
   // TODO: Handle Error
   const post = await Post.findById(req.params.postId);
+  const comments = post.comments
+    .map((el) => el)
+    .sort((a, b) => b.createdAt - a.createdAt);
+
   //const comments = post.comments.map((el) => el).sort({ createdAt: -1 });
   if (post) {
     res.status(200).json({
       status: 'success',
-      comments: post.comments,
+      comments,
     });
   } else {
     res.status(400).json({
