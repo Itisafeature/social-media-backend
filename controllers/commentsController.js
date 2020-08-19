@@ -22,10 +22,12 @@ exports.getComments = catchAsync(async (req, res, next) => {
 
 exports.createComment = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.postId);
+  // zconsole.log(post.updatedAt);
   post.comments.push({ content: req.body.content, user: req.user });
   const comment = post.comments[post.comments.length - 1];
+  // zconsole.log(post.updatedAt);
   await post.save();
-  console.log(comment);
+
   res.status(201).json({
     status: 'success',
     comment,
