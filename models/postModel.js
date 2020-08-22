@@ -35,21 +35,10 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// postSchema.path('updatedAt').set(function (newVal) {
-//   console.log(this.updatedAt);
-//   console.log(newVal);
-//   this.oldUpdate = this.updatedAt;
-// });
-
-// postSchema.pre('save', function (next) {
-//   // console.log(this.oldUpdate);
-//   // console.log(this.updatedAt);
-// });
-
 postSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
-    select: 'username',
+    select: 'username image',
   });
   next();
 });

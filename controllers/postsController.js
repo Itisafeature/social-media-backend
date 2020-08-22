@@ -11,6 +11,7 @@ exports.getPosts = async (req, res, next) => {
     posts = await Post.find().sort({ updatedAt: -1 }).select('-comments'); // Not excluding __v
   }
 
+  console.log(posts);
   res.status(200).json({
     status: 'success',
     posts,
