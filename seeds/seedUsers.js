@@ -10,29 +10,28 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('DB Running'));
+mongoose.connect(DB, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+});
 
-axios
-  .get('https://randomuser.me/api/?results=20')
-  .then((res) => res)
-  .then((data) => {
-    data['data']['results'].forEach((person) => {
-      User.create({
+const seedUsers = async () => {
+  try {
+    const data = await axios.get('https://randomuser.me/api/?results=20');
+    for (const person of data['data']['results']) {
+      await User.create({
         username: person['login']['username'],
         email: person['email'],
         image: person['picture']['thumbnail'],
         password: 'test1234',
         passwordConfirm: 'test1234',
       });
-    });
-  })
-  .catch((err) => console.log(err));
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-mongoose.disconnect();
+seedUsers().then(() => mongoose.disconnect());
