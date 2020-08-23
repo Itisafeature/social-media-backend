@@ -6,6 +6,7 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: [true, 'A comment must have some content'],
       minlength: [5, 'Minimum of five characters required'],
+      maxLength: [250, 'Max Length of 250 characters'],
     },
     user: {
       type: mongoose.Schema.ObjectId,
@@ -24,7 +25,6 @@ const postSchema = new mongoose.Schema(
       minlength: [10, 'Minimum of ten characters required'],
       maxlength: [250, 'Max length of 250 characters'],
     },
-    likes: Number,
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
