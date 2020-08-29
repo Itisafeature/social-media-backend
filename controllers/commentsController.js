@@ -11,7 +11,6 @@ exports.getComments = catchAsync(async (req, res, next) => {
     .map((el) => el)
     .sort((a, b) => b.createdAt - a.createdAt)
     .slice(req.params.start * 1, req.params.start * 1 + 5);
-  // console.log(comments);
   if (post) {
     res.status(200).json({
       status: 'success',
