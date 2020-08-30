@@ -43,6 +43,9 @@ const createAndSendToken = (user, statusCode, res) => {
 // });
 
 exports.signup = async (req, res, next) => {
+  if (!req.body.image) {
+    req.body.image = 'public/images/defaultpic-1598754659323.jpeg';
+  }
   try {
     const user = await User.create({
       username: req.body.username,
